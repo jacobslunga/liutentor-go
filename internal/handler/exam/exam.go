@@ -23,24 +23,24 @@ func (h *Handler) GetExams(c *echo.Context) error {
 	university := c.Param("university")
 
 	if courseCode == "" {
-		return c.JSON(http.StatusBadRequest, map[string]any{"error": "Missing courseCode"})
+		return c.JSON(http.StatusBadRequest, map[string]any{"success": false, "data": nil, "message": "Missing courseCode"})
 	}
 	if university == "" {
-		return c.JSON(http.StatusBadRequest, map[string]any{"error": "Missing university"})
+		return c.JSON(http.StatusBadRequest, map[string]any{"success": false, "data": nil, "message": "Missing university"})
 	}
 	if !examservice.IsValidUniversity(university) {
-		return c.JSON(http.StatusBadRequest, map[string]any{"error": "Invalid university"})
+		return c.JSON(http.StatusBadRequest, map[string]any{"success": false, "data": nil, "message": "Invalid university"})
 	}
 
 	result, err := examservice.GetExams(courseCode, examservice.University(university), h.DB)
 	if err != nil {
 		if err == examservice.ErrNotFound {
-			return c.JSON(http.StatusNotFound, map[string]any{"error": "No exam documents found for this course"})
+			return c.JSON(http.StatusNotFound, map[string]any{"success": false, "data": nil, "message": "No exam documents found for this course"})
 		}
-		return c.JSON(http.StatusInternalServerError, map[string]any{"error": "Failed to fetch exams"})
+		return c.JSON(http.StatusInternalServerError, map[string]any{"success": false, "data": nil, "message": "Failed to fetch exams"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{"data": result, "message": "Exams fetched successfully"})
+	return c.JSON(http.StatusOK, map[string]any{"success": true, "data": result, "message": "Exams fetched successfully"})
 }
 
 func (h *Handler) GetExam(c *echo.Context) error {
@@ -48,16 +48,16 @@ func (h *Handler) GetExam(c *echo.Context) error {
 
 	examID, err := strconv.Atoi(examIDStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{"error": "examId must be a positive integer"})
+		return c.JSON(http.StatusBadRequest, map[string]any{"success": false, "data": nil, "message": "examId must be a positive integer"})
 	}
 
 	result, err := examservice.GetExam(examID, h.DB)
 	if err != nil {
 		if err == examservice.ErrInvalidID {
-			return c.JSON(http.StatusBadRequest, map[string]any{"error": err.Error()})
+			return c.JSON(http.StatusBadRequest, map[string]any{"success": false, "data": nil, "message": err.Error()})
 		}
-		return c.JSON(http.StatusNotFound, map[string]any{"error": "Exam not found"})
+		return c.JSON(http.StatusNotFound, map[string]any{"success": false, "data": nil, "message": "Exam not found"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{"data": result, "message": "Exam fetched successfully"})
+	return c.JSON(http.StatusOK, map[string]any{"success": true, "data": result, "message": "Exam fetched successfully"})
 }
