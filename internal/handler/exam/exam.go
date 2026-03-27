@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/supabase-community/supabase-go"
 
-	examservice "liutentor-go-api/internal/service/exam"
+	examservice "liutentor-go/internal/service/exam"
 )
 
 type Handler struct {
