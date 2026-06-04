@@ -26,7 +26,7 @@ func main() {
 
 	// Only allow LiU Tentor hosts
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://liutentor.se", "http://localhost:5173"},
+		AllowOrigins: []string{"https://liutentor.se", "http://localhost:5173", "http://localhost:3000"},
 		AllowMethods: []string{"GET", "POST", "DELETE"},
 	}))
 
@@ -41,5 +41,7 @@ func main() {
 		port = "1323"
 	}
 
-	e.Start(":" + port)
+	if err := e.Start(":" + port); err != nil {
+		log.Fatal("Failed to start server")
+	}
 }

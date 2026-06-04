@@ -3,6 +3,7 @@ package exam
 import (
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/supabase-community/postgrest-go"
 	"github.com/supabase-community/supabase-go"
@@ -20,12 +21,7 @@ const (
 var ValidUniversities = []University{LIU, KTH, CTH, LTH}
 
 func IsValidUniversity(u string) bool {
-	for _, v := range ValidUniversities {
-		if University(u) == v {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(ValidUniversities, University(u))
 }
 
 type Exam struct {
@@ -55,8 +51,10 @@ type ExamResult struct {
 	Solution any `json:"solution"`
 }
 
-var ErrNotFound = errors.New("not found")
-var ErrInvalidID = errors.New("examId must be a positive integer")
+var (
+	ErrNotFound  = errors.New("not found")
+	ErrInvalidID = errors.New("examId must be a positive integer")
+)
 
 func GetExams(courseCode string, university University, db *supabase.Client) (*ExamsResult, error) {
 	var examsData []map[string]any
