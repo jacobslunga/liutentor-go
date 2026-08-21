@@ -8,6 +8,7 @@ import (
 
 	"liutentor-go/internal/config"
 	"liutentor-go/internal/db"
+	coursehandler "liutentor-go/internal/handler/course"
 	examhandler "liutentor-go/internal/handler/exam"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	}
 
 	examH := examhandler.NewHandler(supabase)
+	courseH := coursehandler.NewHandler(supabase)
 
 	e := echo.New()
 	e.Use(middleware.RequestLogger())
@@ -35,6 +37,9 @@ func main() {
 	exams := v1.Group("/exams")
 	exams.GET("/:university/:courseCode", examH.GetExams)
 	exams.GET("/:examId", examH.GetExam)
+
+	courses := v1.Group("/courses")
+	courses.GET("/:university", courseH.GetCourses)
 
 	port := cfg.Port
 	if port == "" {
